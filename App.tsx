@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { CHARACTER_DATA } from './constants';
 import RainEffect from './components/RainEffect';
 import Section from './components/Section';
@@ -13,65 +13,12 @@ const QuoteIcon = () => (
 
 function App() {
   const { name, quote, basicInfo, appearance, personality, background, relationships, dialogue, others } = CHARACTER_DATA;
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  useEffect(() => {
-    // Attempt to auto-play audio at low volume
-    const playAudio = async () => {
-      try {
-        if (audioRef.current) {
-          audioRef.current.volume = 0.2; // Rain volume
-          // Use a catch to handle auto-play restrictions or loading errors gracefully
-          await audioRef.current.play().catch(e => console.log("Rain audio autoplay blocked/failed:", e));
-        }
-        setIsPlaying(true);
-      } catch (error) {
-        console.log("Auto-play prevented by browser policy", error);
-        setIsPlaying(false);
-      }
-    };
-
-    // User interaction usually required for audio, but we try anyway
-    playAudio();
-  }, []);
-
-  const toggleAudio = () => {
-    const shouldPlay = !isPlaying;
-    
-    if (audioRef.current) {
-      if (shouldPlay) audioRef.current.play().catch(console.error);
-      else audioRef.current.pause();
-    }
-
-    setIsPlaying(shouldPlay);
-  };
 
   return (
     <div className="relative min-h-screen bg-noir-black text-zinc-300 font-sans selection:bg-red-900 selection:text-white">
+      {/* Visual Rain Effect preserved */}
       <RainEffect />
       
-      {/* Background Audio - Rain Sound only */}
-      <audio 
-        ref={audioRef} 
-        src="https://upload.wikimedia.org/wikipedia/commons/8/87/Rain_falling.ogg" 
-        loop 
-        crossOrigin="anonymous"
-      />
-      
-      {/* Audio Control */}
-      <button 
-        onClick={toggleAudio}
-        className="fixed top-4 right-4 z-50 p-2 text-zinc-500 hover:text-zinc-200 transition-colors opacity-50 hover:opacity-100"
-        aria-label={isPlaying ? "Mute Audio" : "Play Audio"}
-      >
-        {isPlaying ? (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-        ) : (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-        )}
-      </button>
-
       {/* Content Container */}
       <main className="relative z-10 max-w-2xl mx-auto px-6 py-24 md:py-40 flex flex-col gap-32">
         
@@ -85,7 +32,7 @@ function App() {
               className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105"
             />
              <div className="absolute inset-0 bg-gradient-to-t from-noir-black via-transparent to-transparent opacity-60" />
-             {/* Hanja Name - opacity adjusted for subtle visibility (lowered from 60 to 30) */}
+             {/* Hanja Name - fainter opacity as requested (30) */}
              <div className="absolute bottom-6 right-6 writing-vertical-rl text-5xl md:text-7xl font-serif text-white/30 tracking-widest drop-shadow-md">
                 {name.hanja}
              </div>
@@ -105,7 +52,7 @@ function App() {
              <div className="absolute top-0 left-1/2 -translate-x-1/2">
                <QuoteIcon />
              </div>
-             {/* Added whitespace-pre-line to respect newline in quote */}
+             {/* respects newline in quote text */}
              <p className="font-serif text-2xl md:text-3xl text-zinc-400 leading-relaxed italic whitespace-pre-line">
                {quote.text}
              </p>
@@ -145,7 +92,7 @@ function App() {
            <div className="space-y-10">
               <div>
                 <h3 className="text-gold-dim/70 font-serif mb-3 text-lg">Appearance</h3>
-                {/* Changed to dot list style */}
+                {/* dot list style as requested */}
                 <ul className="text-base text-zinc-400 font-light space-y-2 list-none">
                   {appearance.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2">
@@ -158,7 +105,7 @@ function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div>
                    <h3 className="text-gold-dim/70 font-serif mb-3 text-lg">Attire</h3>
-                   {/* Changed to dot list style */}
+                   {/* dot list style */}
                    <ul className="text-base text-zinc-500 font-light space-y-2 list-none">
                      {appearance.attire.map((item, idx) => (
                        <li key={idx} className="flex items-start gap-2">
@@ -170,7 +117,7 @@ function App() {
                 </div>
                 <div>
                    <h3 className="text-gold-dim/70 font-serif mb-3 text-lg">Inventory</h3>
-                   {/* Changed to dot list style */}
+                   {/* dot list style */}
                    <ul className="text-base text-zinc-500 font-light space-y-2 list-none">
                      {appearance.items.map((item, idx) => (
                        <li key={idx} className="flex items-start gap-2">
@@ -307,10 +254,6 @@ function App() {
                </h2>
              </div>
              
-             {/* 
-                We iterate through the secret data, but instead of rendering text,
-                we render the RedactedBlock component which visually obfuscates it.
-             */}
              <div className="grid grid-cols-1 gap-4">
                 <RedactedBlock label="Family Origin" />
                 <RedactedBlock label="Incident Report #1980" />
